@@ -201,6 +201,14 @@ bot.catch((error, ctx) => {
 const app = express();
 app.use(express.json());
 
+app.get("/", (req, res) => {
+  res.json({
+    ok: true,
+    service: "ctt-saobang-telegram-bot",
+    callbackPath: "/bankin/callback"
+  });
+});
+
 app.get("/health", (req, res) => {
   res.json({ ok: true });
 });
@@ -251,8 +259,18 @@ app.post("/bankin/callback", async (req, res) => {
 
 async function main() {
   await bot.launch();
-  app.listen(config.port, () => {
-    console.log(`Bot is running. Callback URL: http://localhost:${config.port}/bankin/callback`);
+
+  const server = app.listen(config.port, config.host, () => {
+    const address = server.address();
+    const host = address.address === "::" || address.address === "0.0.0.0" ? "127.0.0.1" : address.address;
+
+    console.log(`Bot is running. HTTP server listening on ${address.address}:${address.port}`);
+    console.log(`Callback URL: http://${host}:${address.port}/bankin/callback`);
+  });
+
+  server.on("error", (error) => {
+    console.error(`HTTP server failed to listen on ${config.host}:${config.port}`, error);
+    process.exit(1);
   });
 }
 
