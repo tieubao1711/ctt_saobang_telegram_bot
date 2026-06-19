@@ -257,9 +257,7 @@ app.post("/bankin/callback", async (req, res) => {
   return res.json({ ok: true });
 });
 
-async function main() {
-  await bot.launch();
-
+function startHttpServer() {
   const server = app.listen(config.port, config.host, () => {
     const address = server.address();
     const host = address.address === "::" || address.address === "0.0.0.0" ? "127.0.0.1" : address.address;
@@ -272,6 +270,20 @@ async function main() {
     console.error(`HTTP server failed to listen on ${config.host}:${config.port}`, error);
     process.exit(1);
   });
+
+  return server;
+}
+
+async function main() {
+  const server = startHttpServer();
+
+  try {
+    await bot.launch();
+    console.log("Telegram bot launched");
+  } catch (error) {
+    server.close();
+    throw error;
+  }
 }
 
 main().catch((error) => {
