@@ -55,6 +55,24 @@ class BankinClient {
     }));
   }
 
+  getWithdrawBanks() {
+    return this.requestJson(toUrl(this.baseUrl, "B_REQUEST_BANK_LIST", {
+      api_key: this.apiKey
+    }));
+  }
+
+  requestPayOut({ requestId, bankNo, accountNumber, accountName, amount }) {
+    return this.requestJson(toUrl(this.baseUrl, "B_REQUEST_PAY_OUT", {
+      api_key: this.apiKey,
+      request_id: requestId,
+      bankno: bankNo,
+      account_number: accountNumber,
+      account_name: accountName,
+      amount,
+      signature: md5(`${this.apiKey}${requestId}${this.pin}`)
+    }));
+  }
+
   verifyCallbackSignature({ requestId, transId, signature }) {
     if (!requestId || !transId || !signature) {
       return false;

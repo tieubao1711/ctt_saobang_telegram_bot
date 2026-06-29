@@ -14,6 +14,7 @@ function loadConfig() {
     bankinApiKey: process.env.BANKIN_API_KEY,
     bankinPin: process.env.BANKIN_PIN,
     successGroupCommand: process.env.SUCCESS_GROUP_COMMAND || "/congtien",
+    withdrawGroupCommand: process.env.WITHDRAW_GROUP_COMMAND || "/trutien",
     vietqrTemplate: process.env.VIETQR_TEMPLATE || "compact2",
     host: process.env.HOST || "0.0.0.0",
     port: Number(process.env.PORT || 3000)
